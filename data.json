@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-09-14T14:37:41+09:00",
-  "updatedLabel": "2026년 09월 14일 14:37 (한국시각)",
+  "updatedAt": "2026-09-14T14:48:26+09:00",
+  "updatedLabel": "2026년 09월 14일 14:48 (한국시각)",
   "fng": {
     "score": 33.3,
     "rating": "fear",
@@ -10,7 +10,7 @@
   "vix": null,
   "ndx": null,
   "errors": [
-    "VIX 수집 실패: HTTP Error 429: Too Many Requests",
-    "나스닥100 수집 실패: HTTP Error 429: Too Many Requests"
+    "VIX 수집 실패: yahoo 실패",
+    "나스닥100 수집 실패: yahoo 실패"
   ]
 }
