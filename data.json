@@ -1,16 +1,17 @@
 {
-  "updatedAt": "2026-09-14T15:05:34+09:00",
-  "updatedLabel": "2026년 09월 14일 15:05 (한국시각)",
-  "fng": {
-    "score": 33.3,
-    "rating": "fear",
-    "week": 45.2,
-    "month": 60.1
+  "updatedAt": "2026-09-14T15:10:23+09:00",
+  "updatedLabel": "2026년 09월 14일 15:10 (한국시각)",
+  "fng": null,
+  "vix": 15.84,
+  "ndx": {
+    "last": 29368.44,
+    "ma200": 27129.31,
+    "high52w": 30660.6,
+    "drawdown": -4.21,
+    "maGap": 8.25,
+    "days": 300
   },
-  "vix": null,
-  "ndx": null,
   "errors": [
-    "VIX 수집 실패: HTTP Error 400: Bad Request",
-    "나스닥100 수집 실패: HTTP Error 400: Bad Request"
+    "공포탐욕지수 수집 실패: HTTP Error 520: <none>"
   ]
 }
