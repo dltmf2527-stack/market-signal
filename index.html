@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>분할매수 신호판</title>
+<style>
+body{background:#0f1115;color:#e8eaed;font-family:-apple-system,"Malgun Gothic",sans-serif;max-width:600px;margin:0 auto;padding:16px;line-height:1.6}
+h1{font-size:20px;text-align:center;padding:14px 0}
+#sig{border:1px solid #2a2f3a;border-radius:16px;padding:24px;text-align:center;background:#181b22;margin-bottom:14px}
+#sig.go{border-color:#ef4444;background:#231a1d}
+.big{font-size:20px;font-weight:800;margin:8px 0}
+.card{background:#181b22;border:1px solid #2a2f3a;border-radius:12px;padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.card b{font-size:22px}
+.lb{font-size:12px;color:#9aa1ad}
+table{width:100%;border-collapse:collapse;font-size:12px;background:#181b22;border-radius:12px;overflow:hidden;margin:14px 0}
+th,td{padding:9px 6px;text-align:center;border-top:1px solid #2a2f3a}
+th{color:#9aa1ad}
+tr.hit{background:#3a1f24;font-weight:700}
+.note{background:#181b22;border:1px solid #2a2f3a;border-radius:12px;padding:14px;font-size:12px;color:#9aa1ad;margin-bottom:12px}
+.note b{color:#e8eaed}
+button{width:100%;padding:12px;border-radius:10px;border:1px solid #2a2f3a;background:#1f232c;color:#e8eaed;font-size:14px;cursor:pointer;margin-bottom:10px}
+#st{text-align:center;font-size:11px;color:#9aa1ad;padding:10px 0 24px}
+</style>
+</head>
+<body>
+<h1>📊 분할매수 신호판</h1>
+<div id="sig">불러오는 중…</div>
+<div id="cards"></div>
+<table><thead><tr><th>단계</th><th>공포탐욕</th><th>VIX</th><th>낙폭</th><th>투입</th></tr></thead><tbody id="tb"></tbody></table>
+<button onclick="load()">🔄 새로고침</button>
+<div class="note"><b>📱 홈화면 추가</b><br>아이폰: 사파리 → 공유 ⎙ → 홈 화면에 추가<br>안드로이드: 크롬 → ⋮ → 홈 화면에 추가</div>
+<div class="note"><b>⚠️ 꼭 지킬 것</b><br>1. 대기현금을 미리 확보해두세요<br>2. 한 번에 다 넣지 마세요<br>3. 신호 뜨면 뉴스는 보지 마세요<br>4. 기준 수정은 평온할 때만<br><br>투자 권유가 아닙니다. 모든 판단과 책임은 본인에게 있습니다.</div>
+<div id="st">—</div>
+<script>
+var RULES=[
+{s:1,l:"1단계 진입",d:"대기현금의 25%",fng:25,vix:null,dd:-15},
+{s:2,l:"2단계 진입",d:"대기현금의 25%",fng:15,vix:30,dd:-25},
+{s:3,l:"3단계 진입",d:"대기현금의 25%",fng:10,vix:35,dd:-35},
+{s:4,l:"4단계 전량투입",d:"남은 현금 전부",fng:null,vix:50,dd:-45}];
+function g(i){return document.getElementById(i)}
+function load(){
+ fetch("data.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(render)
+ .catch(function(){
+  g("sig").innerHTML='<div class="big">😵 데이터 없음</div><div class="lb">Actions 탭 → Run workflow 를 눌러주세요</div>';
+  g("st").textContent="불러오기 실패";});
+}
+function render(d){
+ var f=d.fng.score,v=d.vix,dd=d.ndx.drawdown,gap=d.ndx.maGap;
+ var lab=f<=25?"극단적 공포":f<=45?"공포":f<=55?"중립":f<=75?"탐욕":"극단적 탐욕";
+ var vl=v<20?"정상":v<30?"긴장 고조":v<50?"스트레스":"공황";
+ g("cards").innerHTML=
+ '<div class="card"><span><div>공포탐욕지수</div><div class="lb">'+lab+' · 1주전 '+d.fng.week+'</div></span><b>'+f+'</b></div>'+
+ '<div class="card"><span><div>VIX 변동성</div><div class="lb">'+vl+'</div></span><b>'+v+'</b></div>'+
+ '<div class="card"><span><div>나스닥100 낙폭</div><div class="lb">52주고점 '+Math.round(d.ndx.high52w).toLocaleString()+'</div></span><b>'+dd.toFixed(1)+'%</b></div>'+
+ '<div class="card"><span><div>200일선 대비</div><div class="lb">'+(gap<0?"🔻 아래":"🔺 위")+'</div></span><b>'+(gap>=0?"+":"")+gap.toFixed(1)+'%</b></div>';
+ var hit=null,html="";
+ for(var i=0;i<RULES.length;i++){
+  var r=RULES[i],w=[];
+  if(r.fng!=null&&f<=r.fng)w.push("공포탐욕 "+f+" ≤ "+r.fng);
+  if(r.vix!=null&&v>=r.vix)w.push("VIX "+v+" ≥ "+r.vix);
+  if(r.dd!=null&&dd<=r.dd)w.push("낙폭 "+dd.toFixed(1)+"% ≤ "+r.dd+"%");
+  if(w.length)hit={r:r,w:w};
+  html+='<tr class="'+(w.length?"hit":"")+'"><td>'+r.s+'단계</td><td>'+(r.fng!=null?r.fng+" 이하":"–")+'</td><td>'+(r.vix!=null?r.vix+" 이상":"–")+'</td><td>'+r.dd+'%</td><td>'+(r.s==4?"전부":"25%")+'</td></tr>';
+ }
+ g("tb").innerHTML=html;
+ if(hit){
+  g("sig").className="go";
+  g("sig").innerHTML='<div style="font-size:40px">🚨</div><div class="big">'+hit.r.l+'</div><div>투입 → <b>'+hit.r.d+'</b></div><div class="lb" style="margin-top:10px;text-align:left">✓ '+hit.w.join("<br>✓ ")+'</div>';
+ }else{
+  g("sig").className="";
+  g("sig").innerHTML='<div style="font-size:40px">😴</div><div class="big">대기 — 조건 미충족</div><div class="lb">평소처럼 적립만 계속<br>1단계까지 공포탐욕 '+(f-25).toFixed(1)+' 더 하락 필요</div>';
+ }
+ var hr=(Date.now()-new Date(d.updatedAt).getTime())/3.6e6;
+ g("st").textContent="마지막 갱신 · "+d.updatedLabel+(hr>96?"  ⚠️ 4일 이상 갱신 안 됨":"");
+}
+load();
+</script>
+</body>
+</html>
