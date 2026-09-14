@@ -3,8 +3,10 @@ import urllib.request
 from datetime import datetime, timezone, timedelta
 
 KST = timezone(timedelta(hours=9))
-UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
-      "Accept": "application/json, text/plain, */*"}
+UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+      "Accept": "application/json, text/plain, */*",
+      "Accept-Language": "en-US,en;q=0.9",
+      "Referer": "https://edition.cnn.com/"}
 
 def get_json(url, timeout=25):
     req = urllib.request.Request(url, headers=UA)
@@ -12,11 +14,22 @@ def get_json(url, timeout=25):
         return json.loads(r.read().decode("utf-8"))
 
 def fetch_fng():
-    d = get_json("https://production.dataviz.cnn.io/index/fearandgreed/graphdata")
-    f = d["fear_and_greed"]
-    return {"score": round(float(f["score"]), 1), "rating": f["rating"],
-            "week": round(float(f["previous_1_week"]), 1),
-            "month": round(float(f["previous_1_month"]), 1)}
+    urls = [
+        "https://production.dataviz.cnn.io/index/fearandgreed/graphdata",
+        "https://api.allorigins.win/raw?url=https%3A%2F%2Fproduction.dataviz.cnn.io%2Findex%2Ffearandgreed%2Fgraphdata",
+        "https://r.jina.ai/https://production.dataviz.cnn.io/index/fearandgreed/graphdata",
+    ]
+    last_err = None
+    for u in urls:
+        try:
+            d = get_json(u)
+            f = d["fear_and_greed"]
+            return {"score": round(float(f["score"]), 1), "rating": f["rating"],
+                    "week": round(float(f["previous_1_week"]), 1),
+                    "month": round(float(f["previous_1_month"]), 1)}
+        except Exception as e:
+            last_err = e
+    raise last_err
 
 def fetch_closes(symbol, rng):
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?range={rng}&interval=1d"
