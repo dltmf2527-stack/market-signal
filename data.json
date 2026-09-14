@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-09-14T14:09:45+09:00",
-  "updatedLabel": "2026년 09월 14일 14:09 (한국시각)",
-  "fng": null,
-  "vix": 15.84,
-  "ndx": {
-    "last": 29368.44,
-    "ma200": 27129.31,
-    "high52w": 30660.6,
-    "drawdown": -4.21,
-    "maGap": 8.25
+  "updatedAt": "2026-09-14T14:28:07+09:00",
+  "updatedLabel": "2026년 09월 14일 14:28 (한국시각)",
+  "fng": {
+    "score": 33.3,
+    "rating": "fear",
+    "week": 45.2,
+    "month": 60.1
   },
+  "vix": null,
+  "ndx": null,
   "errors": [
-    "공포탐욕지수 수집 실패: HTTP Error 418: Unknown Error"
+    "VIX 수집 실패: HTTP Error 429: Too Many Requests",
+    "나스닥100 수집 실패: HTTP Error 429: Too Many Requests"
   ]
 }
