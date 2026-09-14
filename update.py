@@ -31,10 +31,21 @@ def fetch_fng():
             err = e
     raise err
 
+import time
+
 def fetch_closes(symbol, rng):
-    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?range={rng}&interval=1d"
-    d = get_json(url)["chart"]["result"][0]
-    return [c for c in d["indicators"]["quote"][0]["close"] if c is not None]
+    hosts = ["query1.finance.yahoo.com", "query2.finance.yahoo.com"]
+    err = None
+    for attempt in range(3):
+        for h in hosts:
+            try:
+                url = f"https://{h}/v8/finance/chart/{symbol}?range={rng}&interval=1d"
+                d = get_json(url)["chart"]["result"][0]
+                return [c for c in d["indicators"]["quote"][0]["close"] if c is not None]
+            except Exception as e:
+                err = e
+                time.sleep(3)
+    raise err
 
 def main():
     errors = []
