@@ -1,16 +1,1 @@
-{
-  "updatedAt": "2026-09-14T14:53:32+09:00",
-  "updatedLabel": "2026년 09월 14일 14:53 (한국시각)",
-  "fng": {
-    "score": 33.3,
-    "rating": "fear",
-    "week": 45.2,
-    "month": 60.1
-  },
-  "vix": null,
-  "ndx": null,
-  "errors": [
-    "VIX 수집 실패: from_naver: 네이버 데이터 부족 (0) / from_stooq: stooq 데이터 부족 (0)",
-    "나스닥100 수집 실패: from_naver: 네이버 데이터 부족 (0) / from_stooq: stooq 데이터 부족 (0)"
-  ]
-}
+{"probe": "진단 실행 중"}
