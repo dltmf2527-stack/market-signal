@@ -19,6 +19,7 @@ th{color:#9aa1ad}
 tr.hit{background:#3a1f24;font-weight:700}
 .note{background:#181b22;border:1px solid #2a2f3a;border-radius:12px;padding:14px;font-size:12px;color:#9aa1ad;margin-bottom:12px}
 .note b{color:#e8eaed}
+.warn{background:#2b2416;border:1px solid #6b5520;border-radius:12px;padding:12px;font-size:12px;color:#e0c060;margin-bottom:12px}
 button{width:100%;padding:12px;border-radius:10px;border:1px solid #2a2f3a;background:#1f232c;color:#e8eaed;font-size:14px;cursor:pointer;margin-bottom:10px}
 #st{text-align:center;font-size:11px;color:#9aa1ad;padding:10px 0 24px}
 </style>
@@ -26,6 +27,7 @@ button{width:100%;padding:12px;border-radius:10px;border:1px solid #2a2f3a;backg
 <body>
 <h1>📊 분할매수 신호판</h1>
 <div id="sig">불러오는 중…</div>
+<div id="warn"></div>
 <div id="cards"></div>
 <table><thead><tr><th>단계</th><th>공포탐욕</th><th>VIX</th><th>낙폭</th><th>투입</th></tr></thead><tbody id="tb"></tbody></table>
 <button onclick="load()">🔄 새로고침</button>
@@ -39,38 +41,56 @@ var RULES=[
 {s:3,l:"3단계 진입",d:"대기현금의 25%",fng:10,vix:35,dd:-35},
 {s:4,l:"4단계 전량투입",d:"남은 현금 전부",fng:null,vix:50,dd:-45}];
 function g(i){return document.getElementById(i)}
+function nf(n){return Math.round(n).toLocaleString()}
 function load(){
- fetch("data.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(render)
+ fetch("data.json?t="+Date.now(),{cache:"no-store"})
+ .then(function(r){return r.json()}).then(render)
  .catch(function(){
   g("sig").innerHTML='<div class="big">😵 데이터 없음</div><div class="lb">Actions 탭 → Run workflow 를 눌러주세요</div>';
   g("st").textContent="불러오기 실패";});
 }
 function render(d){
- var f=d.fng.score,v=d.vix,dd=d.ndx.drawdown,gap=d.ndx.maGap;
- var lab=f<=25?"극단적 공포":f<=45?"공포":f<=55?"중립":f<=75?"탐욕":"극단적 탐욕";
- var vl=v<20?"정상":v<30?"긴장 고조":v<50?"스트레스":"공황";
- g("cards").innerHTML=
- '<div class="card"><span><div>공포탐욕지수</div><div class="lb">'+lab+' · 1주전 '+d.fng.week+'</div></span><b>'+f+'</b></div>'+
- '<div class="card"><span><div>VIX 변동성</div><div class="lb">'+vl+'</div></span><b>'+v+'</b></div>'+
- '<div class="card"><span><div>나스닥100 낙폭</div><div class="lb">52주고점 '+Math.round(d.ndx.high52w).toLocaleString()+'</div></span><b>'+dd.toFixed(1)+'%</b></div>'+
- '<div class="card"><span><div>200일선 대비</div><div class="lb">'+(gap<0?"🔻 아래":"🔺 위")+'</div></span><b>'+(gap>=0?"+":"")+gap.toFixed(1)+'%</b></div>';
- var hit=null,html="";
+ if(!d.ndx){
+  g("sig").innerHTML='<div class="big">😵 지표 수집 실패</div><div class="lb">Actions 탭에서 다시 실행해주세요</div>';
+  g("st").textContent="데이터 불완전";return;}
+ var f=d.fng?d.fng.score:null;
+ var v=(d.vix===null||d.vix===undefined)?null:d.vix;
+ var dd=d.ndx.drawdown,gap=d.ndx.maGap;
+ var h="";
+ if(f!=null){
+  var lab=f<=25?"극단적 공포":f<=45?"공포":f<=55?"중립":f<=75?"탐욕":"극단적 탐욕";
+  h+='<div class="card"><span><div>공포탐욕지수</div><div class="lb">'+lab+' · 1주전 '+d.fng.week+'</div></span><b>'+f+'</b></div>';
+ }else{
+  h+='<div class="card"><span><div>공포탐욕지수</div><div class="lb">수집 실패 · 판정에서 제외</div></span><b>–</b></div>';
+ }
+ if(v!=null){
+  var vl=v<20?"정상":v<30?"긴장 고조":v<50?"스트레스":"공황";
+  h+='<div class="card"><span><div>VIX 변동성</div><div class="lb">'+vl+'</div></span><b>'+v+'</b></div>';
+ }else{
+  h+='<div class="card"><span><div>VIX 변동성</div><div class="lb">수집 실패</div></span><b>–</b></div>';
+ }
+ h+='<div class="card"><span><div>나스닥100 낙폭</div><div class="lb">현재 '+nf(d.ndx.last)+' · 52주고점 '+nf(d.ndx.high52w)+'</div></span><b>'+dd.toFixed(1)+'%</b></div>';
+ h+='<div class="card"><span><div>200일선 대비</div><div class="lb">'+(gap<0?"🔻 아래":"🔺 위")+' · '+nf(d.ndx.ma200)+'</div></span><b>'+(gap>=0?"+":"")+gap.toFixed(1)+'%</b></div>';
+ g("cards").innerHTML=h;
+ var hit=null,rows="";
  for(var i=0;i<RULES.length;i++){
   var r=RULES[i],w=[];
-  if(r.fng!=null&&f<=r.fng)w.push("공포탐욕 "+f+" ≤ "+r.fng);
-  if(r.vix!=null&&v>=r.vix)w.push("VIX "+v+" ≥ "+r.vix);
+  if(r.fng!=null&&f!=null&&f<=r.fng)w.push("공포탐욕 "+f+" ≤ "+r.fng);
+  if(r.vix!=null&&v!=null&&v>=r.vix)w.push("VIX "+v+" ≥ "+r.vix);
   if(r.dd!=null&&dd<=r.dd)w.push("낙폭 "+dd.toFixed(1)+"% ≤ "+r.dd+"%");
   if(w.length)hit={r:r,w:w};
-  html+='<tr class="'+(w.length?"hit":"")+'"><td>'+r.s+'단계</td><td>'+(r.fng!=null?r.fng+" 이하":"–")+'</td><td>'+(r.vix!=null?r.vix+" 이상":"–")+'</td><td>'+r.dd+'%</td><td>'+(r.s==4?"전부":"25%")+'</td></tr>';
+  rows+='<tr class="'+(w.length?"hit":"")+'"><td>'+r.s+'단계</td><td>'+(r.fng!=null?r.fng+" 이하":"–")+'</td><td>'+(r.vix!=null?r.vix+" 이상":"–")+'</td><td>'+r.dd+'%</td><td>'+(r.s==4?"전부":"25%")+'</td></tr>';
  }
- g("tb").innerHTML=html;
+ g("tb").innerHTML=rows;
  if(hit){
   g("sig").className="go";
-  g("sig").innerHTML='<div style="font-size:40px">🚨</div><div class="big">'+hit.r.l+'</div><div>투입 → <b>'+hit.r.d+'</b></div><div class="lb" style="margin-top:10px;text-align:left">✓ '+hit.w.join("<br>✓ ")+'</div>';
+  g("sig").innerHTML='<div style="font-size:40px">🚨</div><div class="big">'+hit.r.l+'</div><div>투입 → <b>'+hit.r.d+'</b></div><div class="lb" style="margin-top:10px;text-align:left">✓ '+hit.w.join("<br>✓ ")+'</div><div class="lb" style="margin-top:10px">미리 정한 규칙입니다. 뉴스 보지 말고 그대로 집행하세요.</div>';
  }else{
   g("sig").className="";
-  g("sig").innerHTML='<div style="font-size:40px">😴</div><div class="big">대기 — 조건 미충족</div><div class="lb">평소처럼 적립만 계속<br>1단계까지 공포탐욕 '+(f-25).toFixed(1)+' 더 하락 필요</div>';
+  var need=f!=null?("1단계까지 공포탐욕 "+(f-25).toFixed(1)+" 더 하락 필요"):("1단계까지 낙폭 "+(dd+15).toFixed(1)+"%p 더 하락 필요");
+  g("sig").innerHTML='<div style="font-size:40px">😴</div><div class="big">대기 — 조건 미충족</div><div class="lb">평소처럼 적립만 계속<br>'+need+'</div>';
  }
+ g("warn").innerHTML=(d.errors&&d.errors.length)?'<div class="warn">⚠️ '+d.errors.join("<br>⚠️ ")+'</div>':"";
  var hr=(Date.now()-new Date(d.updatedAt).getTime())/3.6e6;
  g("st").textContent="마지막 갱신 · "+d.updatedLabel+(hr>96?"  ⚠️ 4일 이상 갱신 안 됨":"");
 }
