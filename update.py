@@ -4,9 +4,10 @@ import urllib.request
 from datetime import datetime, timezone, timedelta
 
 KST = timezone(timedelta(hours=9))
-UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
       "Accept": "*/*",
-      "Accept-Language": "en-US,en;q=0.9"}
+      "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.8",
+      "Referer": "https://m.stock.naver.com/"}
 
 def get_text(url, timeout=30):
     req = urllib.request.Request(url, headers=UA)
@@ -16,7 +17,7 @@ def get_text(url, timeout=30):
 def get_json(url, timeout=30):
     return json.loads(get_text(url, timeout))
 
-# ── 공포탐욕지수 ──
+# ── 공포탐욕지수 (CNN) ──
 def fetch_fng():
     urls = [
         "https://production.dataviz.cnn.io/index/fearandgreed/graphdata",
@@ -33,12 +34,33 @@ def fetch_fng():
             err = e
     raise err
 
-# ── 시세: Stooq(CSV) 우선, 실패 시 야후 ──
+# ── 시세: 네이버 금융 ──
+def from_naver(code):
+    # 네이버는 한 번에 최대 약 1년치씩 주므로 3페이지를 이어붙임
+    closes = []
+    for page in range(3):
+        url = (f"https://api.stock.naver.com/chart/foreign/index/{code}"
+               f"?periodType=dayCandle&page={page+1}")
+        d = get_json(url)
+        rows = d if isinstance(d, list) else d.get("priceInfos", d.get("result", []))
+        for r in rows:
+            v = r.get("closePrice") or r.get("cv") or r.get("close")
+            if v is None:
+                continue
+            try:
+                closes.append(float(str(v).replace(",", "")))
+            except ValueError:
+                pass
+        time.sleep(1)
+    if len(closes) < 250:
+        raise ValueError(f"네이버 데이터 부족 ({len(closes)})")
+    closes.reverse()  # 과거 → 최신 순으로 정렬
+    return closes
+
 def from_stooq(sym):
     txt = get_text(f"https://stooq.com/q/d/l/?s={sym}&i=d")
-    rows = [r for r in txt.strip().split("\n")[1:] if r]
     out = []
-    for r in rows:
+    for r in txt.strip().split("\n")[1:]:
         p = r.split(",")
         if len(p) >= 5:
             try:
@@ -49,25 +71,15 @@ def from_stooq(sym):
         raise ValueError(f"stooq 데이터 부족 ({len(out)})")
     return out
 
-def from_yahoo(sym):
-    for h in ["query1.finance.yahoo.com", "query2.finance.yahoo.com"]:
-        try:
-            d = get_json(f"https://{h}/v8/finance/chart/{sym}?range=3y&interval=1d")
-            c = d["chart"]["result"][0]["indicators"]["quote"][0]["close"]
-            return [x for x in c if x is not None]
-        except Exception:
-            time.sleep(2)
-    raise ValueError("yahoo 실패")
-
-def fetch_closes(stooq_sym, yahoo_sym):
-    err = None
-    for fn, arg in [(from_stooq, stooq_sym), (from_yahoo, yahoo_sym)]:
+def fetch_closes(naver_code, stooq_sym):
+    errs = []
+    for fn, arg in [(from_naver, naver_code), (from_stooq, stooq_sym)]:
         try:
             return fn(arg)
         except Exception as e:
-            err = e
+            errs.append(f"{fn.__name__}: {e}")
             time.sleep(2)
-    raise err
+    raise ValueError(" / ".join(errs))
 
 def main():
     errors = []
@@ -79,13 +91,13 @@ def main():
         errors.append(f"공포탐욕지수 수집 실패: {e}")
 
     try:
-        vix = round(fetch_closes("^vix", "%5EVIX")[-1], 2)
+        vix = round(fetch_closes("VIX", "^vix")[-1], 2)
     except Exception as e:
         vix = None
         errors.append(f"VIX 수집 실패: {e}")
 
     try:
-        c = fetch_closes("^ndq", "%5ENDX")
+        c = fetch_closes("NAS@NDX", "^ndq")
         last = c[-1]
         w = c[-200:]
         ma200 = sum(w) / len(w)
