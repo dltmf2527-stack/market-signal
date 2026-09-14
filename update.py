@@ -49,32 +49,44 @@ def fetch_closes(symbol):
 def main():
     errors = []
 
+    # 이전 데이터 읽기 (수집 실패 시 마지막 정상값 유지)
+    prev = {}
+    try:
+        with open("data.json", encoding="utf-8") as f:
+            prev = json.load(f)
+    except Exception:
+        pass
+
     try:
         fng = fetch_fng()
     except Exception as e:
-        fng = None
-        errors.append(f"공포탐욕지수 수집 실패: {e}")
+        fng = prev.get("fng")
+        if fng:
+            fng = dict(fng)
+            fng["stale"] = True
+            errors.append(f"공포탐욕지수 일시 오류({e}) — 직전 값 사용")
+        else:
+            errors.append(f"공포탐욕지수 수집 실패: {e}")
 
     try:
         vix = round(fetch_closes(".VIX")[-1], 2)
     except Exception as e:
-        vix = None
-        errors.append(f"VIX 수집 실패: {e}")
+        vix = prev.get("vix")
+        errors.append(f"VIX 일시 오류({e}) — 직전 값 사용" if vix else f"VIX 수집 실패: {e}")
 
     try:
         c = fetch_closes(".NDX")
         last = c[-1]
-        w = c[-200:]
-        ma200 = sum(w) / len(w)
-        high = max(c)
+        ma200 = sum(c[-200:]) / 200
+        high = max(c[-252:])
         ndx = {"last": round(last, 2), "ma200": round(ma200, 2),
                "high52w": round(high, 2),
                "drawdown": round((last / high - 1) * 100, 2),
                "maGap": round((last / ma200 - 1) * 100, 2),
                "days": len(c)}
     except Exception as e:
-        ndx = None
-        errors.append(f"나스닥100 수집 실패: {e}")
+        ndx = prev.get("ndx")
+        errors.append(f"나스닥100 일시 오류({e}) — 직전 값 사용" if ndx else f"나스닥100 수집 실패: {e}")
 
     now = datetime.now(KST)
     out = {"updatedAt": now.isoformat(timespec="seconds"),
