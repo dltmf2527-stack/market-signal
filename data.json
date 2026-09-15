@@ -1,17 +1,17 @@
 {
-  "updatedAt": "2026-09-15T12:09:42+09:00",
-  "updatedLabel": "2026년 09월 15일 12:09 (한국시각)",
+  "updatedAt": "2026-09-16T06:42:35+09:00",
+  "updatedLabel": "2026년 09월 16일 06:42 (한국시각)",
   "fng": null,
   "vix": 17.1,
   "ndx": {
-    "last": 29127.16,
-    "ma200": 27150.58,
+    "last": 28937.84,
+    "ma200": 27170.17,
     "high52w": 30660.6,
-    "drawdown": -5.0,
-    "maGap": 7.28,
+    "drawdown": -5.62,
+    "maGap": 6.51,
     "days": 300
   },
   "errors": [
-    "공포탐욕지수 수집 실패: HTTP Error 522: <none>"
+    "공포탐욕지수 수집 실패: HTTP Error 520: <none>"
   ]
 }
