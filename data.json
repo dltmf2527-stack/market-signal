@@ -1,8 +1,8 @@
 {
-  "updatedAt": "2026-09-18T06:42:13+09:00",
-  "updatedLabel": "2026년 09월 18일 06:42 (한국시각)",
+  "updatedAt": "2026-09-18T12:08:37+09:00",
+  "updatedLabel": "2026년 09월 18일 12:08 (한국시각)",
   "fng": null,
-  "vix": 17.71,
+  "vix": 15.44,
   "ndx": {
     "last": 29446.98,
     "ma200": 27208.77,
@@ -12,6 +12,6 @@
     "days": 300
   },
   "errors": [
-    "공포탐욕지수 수집 실패: HTTP Error 522: <none>"
+    "공포탐욕지수 수집 실패: HTTP Error 500: Internal Server Error"
   ]
 }
