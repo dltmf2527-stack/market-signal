@@ -1,8 +1,8 @@
 {
-  "updatedAt": "2026-09-19T06:42:10+09:00",
-  "updatedLabel": "2026년 09월 19일 06:42 (한국시각)",
+  "updatedAt": "2026-09-19T12:08:30+09:00",
+  "updatedLabel": "2026년 09월 19일 12:08 (한국시각)",
   "fng": null,
-  "vix": 15.44,
+  "vix": 14.81,
   "ndx": {
     "last": 29644.17,
     "ma200": 27230.28,
@@ -12,6 +12,6 @@
     "days": 300
   },
   "errors": [
-    "공포탐욕지수 수집 실패: IncompleteRead(89243 bytes read)"
+    "공포탐욕지수 수집 실패: HTTP Error 500: Internal Server Error"
   ]
 }
