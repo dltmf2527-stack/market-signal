@@ -1,17 +1,17 @@
 {
-  "updatedAt": "2026-09-23T12:08:28+09:00",
-  "updatedLabel": "2026년 09월 23일 12:08 (한국시각)",
+  "updatedAt": "2026-09-24T06:43:32+09:00",
+  "updatedLabel": "2026년 09월 24일 06:43 (한국시각)",
   "fng": null,
   "vix": 14.21,
   "ndx": {
-    "last": 30732.4,
-    "ma200": 27280.54,
+    "last": 30470.29,
+    "ma200": 27304.99,
     "high52w": 30732.4,
-    "drawdown": 0.0,
-    "maGap": 12.65,
+    "drawdown": -0.85,
+    "maGap": 11.59,
     "days": 300
   },
   "errors": [
-    "공포탐욕지수 수집 실패: HTTP Error 520: <none>"
+    "공포탐욕지수 수집 실패: HTTP Error 500: Internal Server Error"
   ]
 }
