@@ -1,20 +1,23 @@
 {
-  "updatedAt": "2026-09-25T12:08:46+09:00",
-  "updatedLabel": "2026년 09월 25일 12:08 (한국시각)",
+  "updatedAt": "2026-09-26T06:45:29+09:00",
+  "updatedLabel": "2026년 09월 26일 06:45 (한국시각)",
   "fng": {
     "score": 36.1,
     "rating": "fear",
     "week": 28.3,
-    "month": 55.0
+    "month": 55.0,
+    "stale": true
   },
   "vix": 15.67,
   "ndx": {
-    "last": 30478.86,
-    "ma200": 27328.92,
+    "last": 30608.13,
+    "ma200": 27353.82,
     "high52w": 30732.4,
-    "drawdown": -0.82,
-    "maGap": 11.53,
+    "drawdown": -0.4,
+    "maGap": 11.9,
     "days": 300
   },
-  "errors": []
+  "errors": [
+    "공포탐욕지수 일시 오류(HTTP Error 522: <none>) — 직전 값 사용"
+  ]
 }
