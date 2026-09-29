@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-09-29T12:09:36+09:00",
-  "updatedLabel": "2026년 09월 29일 12:09 (한국시각)",
+  "updatedAt": "2026-09-30T06:46:04+09:00",
+  "updatedLabel": "2026년 09월 30일 06:46 (한국시각)",
   "fng": {
     "score": 36.1,
     "rating": "fear",
@@ -10,14 +10,14 @@
   },
   "vix": 16.07,
   "ndx": {
-    "last": 30276.81,
-    "ma200": 27376.86,
+    "last": 30339.33,
+    "ma200": 27399.68,
     "high52w": 30732.4,
-    "drawdown": -1.48,
-    "maGap": 10.59,
+    "drawdown": -1.28,
+    "maGap": 10.73,
     "days": 300
   },
   "errors": [
-    "공포탐욕지수 일시 오류(HTTP Error 408: Request Timeout) — 직전 값 사용"
+    "공포탐욕지수 일시 오류(HTTP Error 522: <none>) — 직전 값 사용"
   ]
 }
