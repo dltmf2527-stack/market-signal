@@ -1,11 +1,12 @@
 {
-  "updatedAt": "2026-10-21T09:04:53+09:00",
-  "updatedLabel": "2026년 10월 21일 09:04 (한국시각)",
+  "updatedAt": "2026-10-21T17:14:28+09:00",
+  "updatedLabel": "2026년 10월 21일 17:14 (한국시각)",
   "fng": {
     "score": 27.2,
     "rating": "fear",
     "week": 44.1,
-    "month": 30.4
+    "month": 30.4,
+    "stale": true
   },
   "vix": 17.31,
   "ndx": {
@@ -16,5 +17,7 @@
     "maGap": 6.15,
     "days": 300
   },
-  "errors": []
+  "errors": [
+    "공포탐욕지수 일시 오류(HTTP Error 522: <none>) — 직전 값 사용"
+  ]
 }
