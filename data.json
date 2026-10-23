@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-10-23T17:13:08+09:00",
-  "updatedLabel": "2026년 10월 23일 17:13 (한국시각)",
+  "updatedAt": "2026-10-24T08:58:33+09:00",
+  "updatedLabel": "2026년 10월 24일 08:58 (한국시각)",
   "fng": {
     "score": 19.8,
     "rating": "extreme fear",
@@ -8,13 +8,13 @@
     "month": 35.0,
     "stale": true
   },
-  "vix": 19.03,
+  "vix": 19.45,
   "ndx": {
-    "last": 28958.69,
-    "ma200": 27819.5,
+    "last": 28957.53,
+    "ma200": 27836.02,
     "high52w": 31224.69,
     "drawdown": -7.26,
-    "maGap": 4.09,
+    "maGap": 4.03,
     "days": 300
   },
   "errors": [
