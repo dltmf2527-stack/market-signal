@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-11-26T20:50:52+09:00",
-  "updatedLabel": "2026년 11월 26일 20:50 (한국시각)",
+  "updatedAt": "2026-11-27T12:45:33+09:00",
+  "updatedLabel": "2026년 11월 27일 12:45 (한국시각)",
   "fng": {
     "score": 27.1,
     "rating": "fear",
@@ -8,7 +8,7 @@
     "month": 36.9,
     "stale": true
   },
-  "vix": 28.29,
+  "vix": 26.8,
   "ndx": {
     "last": 26046.9,
     "ma200": 28090.98,
@@ -18,6 +18,6 @@
     "days": 300
   },
   "errors": [
-    "공포탐욕지수 일시 오류(The read operation timed out) — 직전 값 사용"
+    "공포탐욕지수 일시 오류(HTTP Error 522: <none>) — 직전 값 사용"
   ]
 }
